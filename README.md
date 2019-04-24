@@ -1,4 +1,6 @@
-# Cadastro ProdutosEstudo Firebase
+# Cadastro Produtos Estudo Firebase
+
+Project to study access to Firebase.
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.8.
 
@@ -9,6 +11,24 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app w
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+# Standard Version
+
+Automate versioning and CHANGELOG generation, with semver and conventional commit messages.
+
+- [Documentation.](https://github.com/conventional-changelog/standard-version)
+
+### Generating project CHANGELOG
+
+```
+npm run release -- --release-as 1.0.0  --dry-run
+
+npm run release -- --release-as patch --dry-run
+
+npm run release -- --release-as minor  --dry-run
+
+npm run release -- --release-as major  --dry-run
+```
 
 # Angular Material
 Material Design components for Angular.
