@@ -1,4 +1,4 @@
-# CadastroProdutosEstudoFirebase
+# Cadastro ProdutosEstudo Firebase
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.8.
 
@@ -6,22 +6,49 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
-
 ## Build
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-## Running unit tests
+# Angular Material
+Material Design components for Angular.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```
+ng add @angular/material
+```
 
-## Running end-to-end tests
+- [Getting started.](https://material.angular.io/guide/getting-started)
+- [Components.](https://material.angular.io/components/categories)
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+# Firebase CLI
 
-## Further help
+These are the Firebase Command Line Interface (CLI) Tools.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+```
+npm install -g firebase-tools
+```
+
+- [Documentation.](https://github.com/firebase/firebase-tools)
+
+# AngularFire
+
+The official library for Firebase and Angular
+
+```
+npm install firebase @angular/fire --save
+```
+
+- [Documentation.](https://github.com/angular/angularfire2)
+
+# Angular Flex-Layout
+
+Angular Flex Layout provides a sophisticated layout API using Flexbox CSS + mediaQuery. This module provides Angular developers with component layout features using a custom Layout API, mediaQuery observables, and injected DOM flexbox-2016 CSS stylings.
+
+```
+npm i -s @angular/flex-layout @angular/cdk
+```
+
+- [Documentation.](https://github.com/angular/flex-layout)
+
+
+
