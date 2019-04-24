@@ -44,7 +44,8 @@ import {
 
 @NgModule({
   declarations: [],
-  imports: [
+  imports: [],
+  exports: [
     CommonModule,
     MatAutocompleteModule,
     MatBadgeModule,
