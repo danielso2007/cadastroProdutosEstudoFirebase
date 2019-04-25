@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -9,5 +10,6 @@ export class AppComponent {
   title = 'cadastroProdutosEstudoFirebase';
 
   constructor() {
+    console.log(environment.teste);
   }
 }
