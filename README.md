@@ -88,3 +88,7 @@ export const _env = {
 The `.env.ts` file is set to` .gitignore`.
 
 
+
+# Firebase Auth Quickstarts
+
+- [Documentation.](https://github.com/firebase/quickstart-js/blob/master/auth/README.md)
