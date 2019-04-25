@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  teste: process.env.USERNAME,
+  teste: "`${process.env}`",
   fireBaseConfig: {
     apiKey: '<your-key>',
     authDomain: '<your-project-authdomain>',
