@@ -13,10 +13,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "customWebpackConfig": {
-              "path": "./custom-webpack.config.js",
-              "replaceDuplicatePlugins": true
-            },
             "outputPath": "dist/cadastroProdutosEstudoFirebase",
             "index": "src/index.html",
             "main": "src/main.ts",
