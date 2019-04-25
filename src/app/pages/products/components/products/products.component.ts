@@ -2,8 +2,9 @@ import { Product } from './../../shared/product.model';
 import { ProductService } from './../../shared/product.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
+import { DialogConfirmDeleteComponent } from '../../../../shared/components/dialog-confirm-delete/dialog-confirm-delete.component';
 
 @Component({
   selector: 'app-products',
@@ -27,7 +28,8 @@ productForm = this.fb.group({
   constructor(
     private fb: FormBuilder,
     private productService: ProductService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -72,13 +74,19 @@ productForm = this.fb.group({
   }
 
   delete(obj: Product) {
-    this.productService.deleteProduct(obj)
-    .then(() => {
-      this.snackBar.open('Product removed.', 'Ok', {duration: 2000});
-    })
-    .catch((error) => {
-      console.error(error);
-      this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
+    const dialogRef = this.dialog.open(DialogConfirmDeleteComponent, {width: '350px', data: obj});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.productService.deleteProduct(obj)
+        .then(() => {
+          this.snackBar.open('Product removed.', 'Ok', {duration: 2000});
+        })
+        .catch((error) => {
+          console.error(error);
+          this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
+        });
+      }
     });
   }
 
