@@ -57,7 +57,7 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
         );
     }
 
-    delete(id: number): Observable<any> {
+    delete(id: string): Observable<any> {
         return this.http.delete(`${this.apiPath}/${id}`, this.headersHttpOptions).pipe(
             map(() => null),
             catchError(this.handleError)

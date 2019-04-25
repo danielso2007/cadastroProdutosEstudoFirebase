@@ -2,7 +2,6 @@ import { OnInit, AfterContentChecked, Injector } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
-import toastr from 'toastr';
 import { BaseResourceModel } from '../../models/base-resource.model';
 import { BaseResourceService } from '../../services/base-resource.service';
 
@@ -61,7 +60,7 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
     }
 
     protected actionsForSuccess(resource: T) {
-        toastr.success('Solicitação processada com sucesso!');
+        // toastr.success('Solicitação processada com sucesso!');
         const baseComponentPath: string = this.route.snapshot.parent.url[0].path;
         this.router.navigateByUrl(baseComponentPath, { skipLocationChange: true })
             .then(
@@ -70,7 +69,7 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
     }
 
     protected actionsForError(error: any) {
-        toastr.error('Erro na solicitaçao!');
+        // toastr.error('Erro na solicitaçao!');
         this.action = false;
         this.resourceForm.enable();
         console.error(error);
