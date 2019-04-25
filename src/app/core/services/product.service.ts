@@ -28,4 +28,10 @@ export class ProductService {
   deleteProduct(obj: Product): Promise<void> {
     return this.productsCollections.doc(obj.id).delete();
   }
+
+  searchByName(name: string): Observable<Product[]> {
+    return this.afs.collection<Product>(
+      'products',
+      ref => ref.orderBy('name').startAt(name).endAt(name + '\uf8ff')).valueChanges();
+  }
 }

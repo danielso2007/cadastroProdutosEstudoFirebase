@@ -14,6 +14,7 @@ export class ProductsComponent implements OnInit {
 
 @ViewChild('name') productNameField: ElementRef;
 products$ = new Observable<Product[]>();
+filterProducts$ = new Observable<Product[]>();
 displayedColumns = ['name', 'price', 'stock', 'operations'];
 
 productForm = this.fb.group({
@@ -79,6 +80,14 @@ productForm = this.fb.group({
       console.error(error);
       this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
     });
+  }
+
+  filter(event) {
+    if (event.target.value && event.target.value !== '') {
+      this.filterProducts$ = this.productService.searchByName(event.target.value);
+    } else {
+      this.filterProducts$ = null;
+    }
   }
 
 }
