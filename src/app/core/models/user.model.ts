@@ -1,9 +1,9 @@
 export interface User {
 
-    key: string;
-    name: string;
-    username: string;
-    email: string;
-    photo?: string;
+  name: string;
+  username: string;
+  email: string;
+  id?: string;
+  photo?: string;
 
 }

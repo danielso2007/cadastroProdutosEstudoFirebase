@@ -7,20 +7,20 @@
               <mat-form-field fxFlex="40">
                   <input matInput placeholder="Product name"  formControlName='name' #name>
               </mat-form-field>
-              
+
               <mat-form-field  fxFlex="20">
                 <input matInput placeholder="Stock" type="number" formControlName='stock'>
               </mat-form-field>
-        
+
               <mat-form-field fxFlex="20">
                 <input matInput placeholder="Price" type="number" formControlName='price'>
                 <span matPrefix>$&nbsp;</span>
               </mat-form-field>
-        
+
               <div fxLayout="row" fxLayoutAlign="end end" >
-                <button  mat-button color="primary" type="submit" [disabled]="!productForm.valid">Submit</button>          
+                <button  mat-button color="primary" type="submit" [disabled]="!productForm.valid">Submit</button>
                 <button mat-button color="warn" type="reset">Cancel</button>
-              </div> 
+              </div>
           </form>
         </div>
         <mat-divider></mat-divider>
@@ -28,17 +28,17 @@
 
         <div class="table-container mat-elevation-z8">
           <table mat-table [dataSource]="products$ | async" style="width: 100%;">
-        
+
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef> Name </th>
               <td mat-cell *matCellDef="let element">{{ element.name }}</td>
             </ng-container>
-        
+
             <ng-container matColumnDef="price">
               <th mat-header-cell *matHeaderCellDef> Price </th>
               <td mat-cell *matCellDef="let element">{{ element.price }}</td>
             </ng-container>
-        
+
             <ng-container matColumnDef="stock">
               <th mat-header-cell *matHeaderCellDef> Stock </th>
               <td mat-cell *matCellDef="let element">{{ element.stock }}</td>
@@ -52,7 +52,7 @@
               </td>
             </ng-container>
 
-            
+
             <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           </table>

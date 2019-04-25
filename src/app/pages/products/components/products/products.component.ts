@@ -1,8 +1,8 @@
+import { Product } from './../../shared/product.model';
+import { ProductService } from './../../shared/product.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ProductService } from 'src/app/core/services/product.service';
 import { MatSnackBar } from '@angular/material';
-import { Product } from 'src/app/core/models/product.model';
 import { Observable } from 'rxjs';
 
 @Component({
