@@ -70,5 +70,21 @@ npm i -s @angular/flex-layout @angular/cdk
 
 - [Documentation.](https://github.com/angular/flex-layout)
 
+# Setting up variables for the environment
+
+Create a file named `.env.ts` at the root of the project. Then add your Firebase configuration:
+
+```
+export const _env = {
+  apiKey: '<your-key>',
+  authDomain: '<your-project-authdomain>',
+  databaseURL: '<your-database-URL>',
+  projectId: '<your-project-id>',
+  storageBucket: '<your-storage-bucket>',
+  messagingSenderId: '<your-messaging-sender-id>'
+};
+```
+
+The `.env.ts` file is set to` .gitignore`.
 
 
