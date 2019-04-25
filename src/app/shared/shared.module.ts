@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import {
@@ -41,12 +40,15 @@ import {
   MatTooltipModule,
   MatTreeModule,
 } from '@angular/material';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [],
-  imports: [],
+  imports: [CommonModule],
   exports: [
     CommonModule,
+    ReactiveFormsModule,
     MatAutocompleteModule,
     MatBadgeModule,
     MatBottomSheetModule,
