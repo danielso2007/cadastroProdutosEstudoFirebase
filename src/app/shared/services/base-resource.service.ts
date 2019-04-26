@@ -1,23 +1,18 @@
 import { BaseResourceModel } from "../models/base-resource.model";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { Injector } from "@angular/core";
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 
 export abstract class BaseResourceService<T extends BaseResourceModel> {
 
-    protected headersHttpOptions = {
-        headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-            'Authorization': 'my-auth-token'
-        })
-    };
+    protected collections: AngularFirestoreCollection<T> = 
+            this.afs.collection<T>(this.collectionsName, ref => ref.orderBy(this.orderByField || 'id'));
 
-    protected http: HttpClient;
-
-    constructor(protected injector: Injector, protected apiPath: string, protected testType: new () => T) {
-        // this.apiPath = environment.url_api + this.apiPath;
-        this.http = this.injector.get(HttpClient);
+    constructor(
+        protected afs: AngularFirestore, 
+        protected collectionsName: string,
+        protected orderByField: string,
+        protected testType: new () => T) {
     }
 
     getNew() : T {
@@ -28,40 +23,52 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
         return Object.assign(this.getNew(), element)
     }
 
+    create(obj: T): Promise<T> {
+        return Promise.resolve(this.getNew());
+    }
+
+    protected result() {
+        return (
+            map(this.jsonDataToResource.bind(this)), // Bind é necessário para passar a instância da classe, não o do map.
+            catchError(this.handleError)
+        );
+    }
+
     getAll(): Observable<T[]> {
-        return this.http.get(this.apiPath).pipe(
-            map(this.jsonDataToResources.bind(this)), // Bind é necessário para passar a instância da classe, não o do map.
-            catchError(this.handleError)
-        );
+        return this.collections.valueChanges()
+        .pipe(this.result());
     }
 
-    getById(id: number): Observable<T> {
-        const url = `${this.apiPath}/${id}`;
-        return this.http.get(url, this.headersHttpOptions).pipe(
-            map(this.jsonDataToResource.bind(this)), // Bind é necessário para passar a instância da classe, não o do map.
-            catchError(this.handleError)
-        );
+    getById(id: string): Observable<T> {
+        return this.afs.collection(this.collectionsName, ref => ref.where('id', '==', id))
+        .valueChanges()
+        .pipe(this.result());
     }
 
-    create(category: T): Observable<T> {
-        return this.http.post(this.apiPath, category, this.headersHttpOptions).pipe(
-            map(this.jsonDataToResource.bind(this)), // Bind é necessário para passar a instância da classe, não o do map.
-            catchError(this.handleError)
-        );
+    save(obj: T): Promise<void | Observable<any>> {
+        obj.id = this.afs.createId();
+        return this.collectionsDoc(obj);
     }
 
-    update(category: T): Observable<T> {
-        return this.http.put(`${this.apiPath}/${category.id}`, category, this.headersHttpOptions).pipe(
-            map(() => category),
-            catchError(this.handleError)
-        );
+    update(obj: T): Promise<void | Observable<any>> {
+        if (obj.id) {
+            return this.collectionsDoc(obj);
+        } else {
+            throwError('Id not informed.');
+        }
     }
 
-    delete(id: string): Observable<any> {
-        return this.http.delete(`${this.apiPath}/${id}`, this.headersHttpOptions).pipe(
-            map(() => null),
-            catchError(this.handleError)
-        );
+    private collectionsDoc(obj: T): Promise<void | Observable<any>> {
+        return this.collections.doc(obj.id).set(obj)
+        .catch(this.handleError);
+    }
+
+    delete(obj: string | T): Promise<void> {
+        let id: any = obj;
+        if (typeof obj !== 'string') {
+            id = obj.id;
+        }
+        return this.collections.doc(id).delete()
     }
 
     jsonDataToResources(jsonData: any[]): T[] {
@@ -83,7 +90,7 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
     }
 
     handleError(error: any): Observable<any> {
-        console.error('ERRO NA REQUISIÇAO => ', error);
+        console.error('ERROR IN REQUIREMENT => ', error);
         return throwError(error);
     }
 

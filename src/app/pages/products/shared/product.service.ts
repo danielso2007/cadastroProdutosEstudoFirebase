@@ -1,32 +1,14 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Product } from './product.model';
+import { BaseResourceService } from 'src/app/shared/services/base-resource.service';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class ProductService {
+@Injectable({providedIn: 'root'})
+export class ProductService extends BaseResourceService<Product> {
 
-  private productsCollections: AngularFirestoreCollection<Product> = this.afs.collection('products');
-
-  constructor(private afs: AngularFirestore) { }
-
-  getProducts(): Observable<Product[]> {
-    return this.productsCollections.valueChanges();
-  }
-
-  addProduct(obj: Product): Promise<void> {
-    obj.id = this.afs.createId();
-    return this.productsCollections.doc(obj.id).set(obj);
-  }
-
-  updateProduct(obj: Product): Promise<void> {
-    return this.productsCollections.doc(obj.id).set(obj);
-  }
-
-  deleteProduct(obj: Product): Promise<void> {
-    return this.productsCollections.doc(obj.id).delete();
+  constructor(protected afs: AngularFirestore) {
+    super(afs, 'products', 'name', Product);
   }
 
   searchByName(name: string): Observable<Product[]> {

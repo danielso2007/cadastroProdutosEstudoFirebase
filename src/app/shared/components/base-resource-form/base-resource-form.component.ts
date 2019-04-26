@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { BaseResourceModel } from '../../models/base-resource.model';
 import { BaseResourceService } from '../../services/base-resource.service';
+import { MatSnackBar } from '@angular/material';
 
 export abstract class BaseResourceFormComponent<T extends BaseResourceModel> implements OnInit, AfterContentChecked {
 
@@ -21,7 +22,8 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
 
     constructor(
         protected resourceService: BaseResourceService<T>,
-        protected injector: Injector
+        protected injector: Injector,
+        protected snackBar: MatSnackBar
     ) {
         this.route = this.injector.get(ActivatedRoute);
         this.router = this.injector.get(Router);
@@ -53,23 +55,23 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
         this.action = true;
         this.resourceForm.disable();
         this.resourceService.create(resource)
-            .subscribe(
-                resource => { this.actionsForSuccess(resource); this.action = false; this.resourceForm.enable(); },
-                error => this.actionsForError(error)
+            .then(
+                resource => { 
+                    this.actionsForSuccess(resource); 
+                    this.action = false; 
+                    this.resourceForm.enable(); 
+                }, error => this.actionsForError(error)
             );
     }
 
     protected actionsForSuccess(resource: T) {
-        // toastr.success('Solicitação processada com sucesso!');
         const baseComponentPath: string = this.route.snapshot.parent.url[0].path;
         this.router.navigateByUrl(baseComponentPath, { skipLocationChange: true })
-            .then(
-                () => this.router.navigate([baseComponentPath, resource.id, 'edit'])
-            );
+            .then(() => this.router.navigate([baseComponentPath, resource.id, 'edit']));
     }
 
     protected actionsForError(error: any) {
-        // toastr.error('Erro na solicitaçao!');
+        this.snackBar.open('Error in request.', 'Ok', {duration: 4000});
         this.action = false;
         this.resourceForm.enable();
         console.error(error);
@@ -77,7 +79,7 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
         if (error.status === 422) {
             this.serverErrorMessages = JSON.parse(error._body).errors;
         } else {
-            this.serverErrorMessages = ['Falha na comunicação com o servidor. Por favor, tente mais tarde.'];
+            this.serverErrorMessages = ['Failure to communicate with the server. Please try again later.'];
         }
     }
 
@@ -86,9 +88,12 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
         this.action = true;
         this.resourceForm.disable();
         this.resourceService.update(resource)
-            .subscribe(
-                resource => { this.actionsForSuccess(resource); this.action = false; this.resourceForm.enable(); },
-                error => this.actionsForError(error)
+            .then(
+                result => { 
+                    this.actionsForSuccess(resource);
+                    this.action = false;
+                    this.resourceForm.enable();
+                }, error => this.actionsForError(error)
             );
     }
 
@@ -107,7 +112,7 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
     }
 
     /**
-     * Ao atualizar o object, seta-lo novamente em:
+     * When updating the object, re-launch it in:
      * this.resourceForm.patchValue(resource);
      */
     protected load(): void {
@@ -115,7 +120,7 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
         this.resourceForm.disable();
         if (this.currentAction === 'edit') {
             this.route.paramMap.pipe(
-                switchMap(params => this.resourceService.getById(Number(params.get('id'))))
+                switchMap(params => this.resourceService.getById(String(params.get('id'))))
             ).subscribe(
                 (resource) => {
                     this.resource = resource;
@@ -123,7 +128,7 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
                     this.action = false;
                     this.resourceForm.enable();
                 },
-                (error) => alert('Ocorreu um erro no servidor')
+                (error) => alert('An error occurred on the server')
             );
         } else {
             this.resource = this.resourceService.getNew();

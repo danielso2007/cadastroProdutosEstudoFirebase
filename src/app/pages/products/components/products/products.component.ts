@@ -33,7 +33,7 @@ productForm = this.fb.group({
   ) { }
 
   ngOnInit() {
-    this.products$ = this.productService.getProducts();
+    this.products$ = this.productService.getAll();
   }
 
   onSubmit() {
@@ -46,25 +46,23 @@ productForm = this.fb.group({
   }
 
   addProduct(obj: Product) {
-    this.productService.addProduct(obj)
+    this.productService.save(obj)
     .then(() => {
       this.snackBar.open('Product added.', 'Ok', {duration: 2000});
       this.productForm.reset({name: '', price: 0, stock: 0, id: undefined});
       this.productNameField.nativeElement.focus();
     })
     .catch((error) => {
-      console.error(error);
       this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
     });
   }
 
   editProduct(obj: Product) {
-    this.productService.updateProduct(obj)
+    this.productService.update(obj)
     .then(() => {
       this.snackBar.open('Product updated.', 'Ok', {duration: 2000});
     })
     .catch((error) => {
-      console.error(error);
       this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
     });
   }
@@ -78,12 +76,11 @@ productForm = this.fb.group({
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.productService.deleteProduct(obj)
+        this.productService.delete(obj)
         .then(() => {
           this.snackBar.open('Product removed.', 'Ok', {duration: 2000});
         })
         .catch((error) => {
-          console.error(error);
           this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
         });
       }
