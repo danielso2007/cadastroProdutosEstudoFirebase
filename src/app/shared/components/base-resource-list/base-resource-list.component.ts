@@ -18,7 +18,7 @@ export class BaseListComponent<T extends BaseResourceModel> implements OnInit {
 
   delete(resource: T): void {
     this.action = true;
-    const mustDelete = confirm('Deseja realmente excluir este item?');
+    const mustDelete = confirm('Do you really want to delete this item?');
     if (mustDelete) {
       this.resourceService.delete(resource.id).then(
         () => {
