@@ -1,3 +1,19 @@
 table {
   width: 100%;
 }
+
+.mat-column-name {
+  width: 50%;
+}
+
+.mat-column-price {
+  width: 20%;
+}
+
+.mat-column-stock {
+  width: 20%;
+}
+
+.mat-column-operations {
+  width: 10%;
+}

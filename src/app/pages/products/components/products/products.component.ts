@@ -17,6 +17,7 @@ export class ProductsComponent implements OnInit {
 products$ = new Observable<Product[]>();
 filterProducts$ = new Observable<Product[]>();
 displayedColumns = ['name', 'price', 'stock', 'operations'];
+displayedColumnsFilterList = ['name', 'price', 'stock'];
 
 productForm = this.fb.group({
   id: [undefined],
