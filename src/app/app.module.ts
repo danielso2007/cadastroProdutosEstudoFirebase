@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { AngularFireModule, FirebaseAppConfig } from '@angular/fire';
 import { environment } from '../environments/environment';
 import { CoreModule } from './core/core.module';
+
+import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFirestore, FirestoreSettingsToken} from '@angular/fire/firestore';
 const firebaseAppConfig: FirebaseAppConfig = environment.fireBaseConfig;
 
@@ -17,7 +19,8 @@ const firebaseAppConfig: FirebaseAppConfig = environment.fireBaseConfig;
   imports: [
     CoreModule,
     AppRoutingModule,
-    AngularFireModule.initializeApp(firebaseAppConfig)
+    AngularFireModule.initializeApp(firebaseAppConfig),
+    AngularFireStorageModule
   ],
   providers: [AngularFirestore, { provide: FirestoreSettingsToken, useValue: {} }],
   bootstrap: [AppComponent]

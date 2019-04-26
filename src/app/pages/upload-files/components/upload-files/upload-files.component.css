@@ -1,0 +1,32 @@
+.box-dropzone {
+  flex-direction: row;
+  box-sizing: border-box;
+  display: flex;
+  place-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  width: 95%;
+  height: 100%;
+  min-height: 100px;
+  max-height: 300px;
+  margin: 20px 20px 20px 20px;
+  background: #eff0f1;
+  border-collapse: separate;
+  border: dashed #e0e0dc;
+  border-radius: 40px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 40px;
+  color: dimgrey;
+}
+
+.dropzone-drag-and-hovering {
+  border: 4px dashed darkblue;
+  color: #dadada !important;
+  background: #f9fdff;
+}
+
+.item-file {
+  padding: 5px;
+  margin: 4px;
+  width: 100%;
+}

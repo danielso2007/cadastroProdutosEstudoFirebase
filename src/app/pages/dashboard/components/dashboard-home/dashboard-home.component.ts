@@ -8,35 +8,33 @@ import { MatSidenav } from '@angular/material/sidenav';
 
     <mat-sidenav #sidenav class="sidenav">
 
-      <mat-toolbar color="primary" class="mat-elevation-z2">
-      <mat-toolbar-row>
-        <h1>Menu</h1>
-        <span class="example-spacer"></span>
+        <mat-toolbar color="primary" class="mat-elevation-z2">
+            <mat-toolbar-row>
+                <h1>Menu</h1>
+                <span class="example-spacer"></span>
 
-          <button mat-icon-button id='sidenav_logout' (click)="sidenav.toggle()">
-            <mat-icon class="example-icon" aria-hidden="false">arrow_back</mat-icon>
-          </button>
-        </mat-toolbar-row>
-      </mat-toolbar>
+                <button mat-icon-button id='sidenav_logout' (click)="sidenav.toggle()">
+                    <mat-icon class="example-icon" aria-hidden="false">arrow_back</mat-icon>
+                </button>
+            </mat-toolbar-row>
+        </mat-toolbar>
 
-      <app-dashboard-resources
-        [isMenu]="true"
-        (close)="sidenav.close()">
+        <app-dashboard-resources [isMenu]="true" (close)="sidenav.close()">
 
-        <mat-divider></mat-divider>
+            <mat-divider></mat-divider>
 
-        <mat-list-item (click)="onLogout(sidenav)">
-          <mat-icon matListIcon>exit_to_app</mat-icon>
-          <h3 matLine>Logout</h3>
-        </mat-list-item>
+            <mat-list-item (click)="onLogout(sidenav)">
+                <mat-icon matListIcon>exit_to_app</mat-icon>
+                <h3 matLine>Logout</h3>
+            </mat-list-item>
 
-      </app-dashboard-resources>
+        </app-dashboard-resources>
 
     </mat-sidenav>
 
     <mat-sidenav-content>
-      <app-dashboard-header [sidenav]="sidenav"></app-dashboard-header>
-      <router-outlet></router-outlet>
+        <app-dashboard-header [sidenav]="sidenav"></app-dashboard-header>
+        <router-outlet></router-outlet>
     </mat-sidenav-content>
 
   </mat-sidenav-container>
