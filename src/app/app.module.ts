@@ -7,7 +7,6 @@ import { AngularFireModule, FirebaseAppConfig } from '@angular/fire';
 import { environment } from '../environments/environment';
 import { CoreModule } from './core/core.module';
 import { AngularFirestore, FirestoreSettingsToken} from '@angular/fire/firestore';
-
 const firebaseAppConfig: FirebaseAppConfig = environment.fireBaseConfig;
 
 

@@ -9,6 +9,8 @@ const routes: Routes = [
     component: DashboardHomeComponent,
     children: [
       {path: 'products', loadChildren: '../products/products.module#ProductsModule'},
+      {path: 'my-files', loadChildren: '../my-files/my-files.module#MyFilesModule'},
+      {path: 'upload-files', loadChildren: '../upload-files/upload-files.module#UploadFilesModule'},
       { path: '', component: DashboardResourcesComponent}
     ]
   }

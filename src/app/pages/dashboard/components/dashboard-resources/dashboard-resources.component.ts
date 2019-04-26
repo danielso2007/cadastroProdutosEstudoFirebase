@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { MenuItem } from '../../shared/menuItem.model';
 
 @Component({
   selector: 'app-dashboard-resources',
@@ -26,18 +27,28 @@ export class DashboardResourcesComponent implements OnInit {
   @Output() close = new EventEmitter<void>();
 
   constructor(private title: Title) {
-    this.title.setTitle('Product Registration');
   }
 
-  resources: any[] = [
+  resources: MenuItem[] = [
     {
       url: '/dashboard/products',
       icon: 'chat_bubble',
       title: 'Products'
+    },
+    {
+      url: '/dashboard/upload-files',
+      icon: 'cloud_upload',
+      title: 'Upload files'
+    },
+    {
+      url: '/dashboard/my-files',
+      icon: 'list',
+      title: 'My files'
     }
   ];
 
   ngOnInit(): void {
+    this.title.setTitle('Home');
     if (this.isMenu) {
       this.resources.unshift({
         url: '/dashboard',

@@ -9,7 +9,14 @@ import { MatSidenav } from '@angular/material/sidenav';
     <mat-sidenav #sidenav class="sidenav">
 
       <mat-toolbar color="primary" class="mat-elevation-z2">
-        Menu
+      <mat-toolbar-row>
+        <h1>Menu</h1>
+        <span class="example-spacer"></span>
+
+          <button mat-icon-button id='sidenav_logout' (click)="sidenav.toggle()">
+            <mat-icon class="example-icon" aria-hidden="false">arrow_back</mat-icon>
+          </button>
+        </mat-toolbar-row>
       </mat-toolbar>
 
       <app-dashboard-resources

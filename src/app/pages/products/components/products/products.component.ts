@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
 import { DialogConfirmDeleteComponent } from '../../../../shared/components/dialog-confirm-delete/dialog-confirm-delete.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-products',
@@ -30,11 +31,13 @@ productForm = this.fb.group({
     private fb: FormBuilder,
     private productService: ProductService,
     private snackBar: MatSnackBar,
+    private title: Title,
     public dialog: MatDialog
   ) { }
 
   ngOnInit() {
     this.products$ = this.productService.getAll();
+    this.title.setTitle('Product Registration');
   }
 
   onSubmit() {
