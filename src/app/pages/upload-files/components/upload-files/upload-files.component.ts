@@ -32,7 +32,7 @@ export class UploadFilesComponent implements OnInit {
 
   onDropEvent(event: any) {
     event.preventDefault();
-    console.log(event.dataTransfer.files);
+    // console.log(event.dataTransfer.files);
     this.files = this.fileUploadService.createListEntries(event.dataTransfer.files);
   }
 
@@ -44,6 +44,10 @@ export class UploadFilesComponent implements OnInit {
     for (let i = 0; i < this.files.length; i++) {
       this.fileUploadService.uploadFile(this.files[i]);
     }
+  }
+
+  clean(): void {
+    this.files = [];
   }
 
 }

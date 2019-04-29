@@ -5,6 +5,7 @@
     (dragleave)="onDragLeaveEvent($event)"
     (drop)="onDropEvent($event)"
     [class.dropzone-drag-and-hovering]="isDraggingOver">
+    Drag and drop the files here.
     </div>
   </div>
   <div fxLayout="row" fxLayoutAlign="center center">
@@ -17,7 +18,7 @@
           </div>
           <ng-template #uploading>
             <div fxLayout="row" fxLayoutAlign="end center" fxFlex="40">
-              <ng-container *ngIf="!(f.finished | async) && !((f.error | async) || (f.canceled | async))">
+              <ng-container *ngIf="!(f.finished) && !((f.error | async) || (f.canceled | async))">
                 <span style="font-style: italic; margin-rigth: 10px;">{{f.bytesuploaded|async}} bytes</span>
                 <mat-progress-bar mode="determinate" [value]="f.percentage|async" style="max-width: 200px;"></mat-progress-bar>
                 <button mat-icon-button color="accent" *ngIf="f.uploading | async" (click)="f.task.cancel()"><mat-icon>cancel</mat-icon></button>
@@ -25,11 +26,14 @@
                 <button mat-icon-button color="primary" *ngIf="f.paused | async" (click)="f.task.resume()"><mat-icon>play_arrow</mat-icon></button>
               </ng-container>
               <mat-icon *ngIf="(f.error | async) || (f.canceled | async)" color="warn">error</mat-icon>
-              <mat-icon *ngIf="(f.finished | async)" color="primary">done</mat-icon>
+              <mat-icon *ngIf="(f.finished)" color="primary">done</mat-icon>
             </div>
           </ng-template>
         </mat-card>
         <div fxLayout="row" fxLayoutAlign="end center">
+          <button mat-button color="success" (click)="clean()">
+            <mat-icon>clear_all</mat-icon> Clean
+          </button>
             <button mat-button color="primary" (click)="uploadAll()">
               <mat-icon>cloud_upload</mat-icon> Send all
             </button>

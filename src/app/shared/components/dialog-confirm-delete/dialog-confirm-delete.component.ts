@@ -11,15 +11,19 @@ export class DialogConfirmDeleteComponent implements OnInit {
 
   title: string;
   message: string;
+  cancelLabel: string;
+  okLabel: string;
 
   ngOnInit() {
-    this.title = `Remove Product`;
-    this.message = `Do you want to remove the ${this.data.name} product?`;
+    this.title = this.data.title || undefined;
+    this.message = this.data.message || 'Message not defined';
+    this.cancelLabel = this.data.cancelLabel || 'Cancel';
+    this.okLabel = this.data.okLabel || 'Ok';
   }
 
   constructor(
     public dialogRef: MatDialogRef<DialogConfirmDeleteComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Product) {}
+    @Inject(MAT_DIALOG_DATA) public data: any) {}
 
   onNoClick(): void {
     this.dialogRef.close();

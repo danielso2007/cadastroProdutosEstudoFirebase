@@ -1,7 +1,7 @@
 import { BaseResourceModel } from "../models/base-resource.model";
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, DocumentChangeAction } from '@angular/fire/firestore';
 
 export abstract class BaseResourceService<T extends BaseResourceModel> {
 
@@ -20,10 +20,10 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
     }
 
     castObject(element: any): T {
-        return Object.assign(this.getNew(), element)
+        return Object.assign(this.getNew(), element);
     }
 
-    create(obj: T): Promise<T> {
+    create(): Promise<T> {
         return Promise.resolve(this.getNew());
     }
 
@@ -39,6 +39,11 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
         .pipe(this.result());
     }
 
+    getAllSnapshotChanges(): Observable<DocumentChangeAction<T>[]> {
+        return this.collections.snapshotChanges();
+    }
+
+
     getById(id: string): Observable<T> {
         return this.afs.collection(this.collectionsName, ref => ref.where('id', '==', id))
         .valueChanges()
@@ -47,11 +52,14 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
 
     save(obj: T): Promise<void | Observable<any>> {
         obj.id = this.afs.createId();
+        obj.createAt = new Date().getTime();
+        delete obj.updateAt;
         return this.collectionsDoc(obj);
     }
 
     update(obj: T): Promise<void | Observable<any>> {
         if (obj.id) {
+            obj.updateAt = new Date().getTime();
             return this.collectionsDoc(obj);
         } else {
             throwError('Id not informed.');
@@ -59,7 +67,9 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
     }
 
     private collectionsDoc(obj: T): Promise<void | Observable<any>> {
-        return this.collections.doc(obj.id).set(obj)
+        //Firebase only accepts pure javascript data.
+        let entityJavaScript = Object.assign({}, obj);
+        return this.collections.doc(entityJavaScript.id).set(entityJavaScript)
         .catch(this.handleError);
     }
 

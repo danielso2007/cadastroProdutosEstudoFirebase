@@ -24,19 +24,21 @@ productForm = this.fb.group({
   id: [undefined],
   name: ['', Validators.required],
   stock: [0, Validators.required],
-  price: [0, Validators.required]
+  price: [0, Validators.required],
+  createAt: [undefined],
+  updateAt: [undefined]
 });
 
   constructor(
     private fb: FormBuilder,
-    private productService: ProductService,
+    private service: ProductService,
     private snackBar: MatSnackBar,
     private title: Title,
     public dialog: MatDialog
   ) { }
 
   ngOnInit() {
-    this.products$ = this.productService.getAll();
+    this.products$ = this.service.getAll();
     this.title.setTitle('Product Registration');
   }
 
@@ -50,11 +52,10 @@ productForm = this.fb.group({
   }
 
   addProduct(obj: Product) {
-    this.productService.save(obj)
+    this.service.save(obj)
     .then(() => {
       this.snackBar.open('Product added.', 'Ok', {duration: 2000});
-      this.productForm.reset({name: '', price: 0, stock: 0, id: undefined});
-      this.productNameField.nativeElement.focus();
+      this.cleanForm();
     })
     .catch((error) => {
       this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
@@ -62,30 +63,42 @@ productForm = this.fb.group({
   }
 
   editProduct(obj: Product) {
-    this.productService.update(obj)
+    this.service.update(obj)
     .then(() => {
       this.snackBar.open('Product updated.', 'Ok', {duration: 2000});
+      this.cleanForm();
     })
     .catch((error) => {
       this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
     });
   }
 
+  cleanForm(): void {
+    this.productForm.reset({name: '', price: 0, stock: 0, id: undefined, createAt: undefined, updateAt: undefined});
+    this.productNameField.nativeElement.focus();
+  }
+
   edit(obj: Product) {
+    if (!obj.updateAt) obj.updateAt = 0;
     this.productForm.setValue(obj);
   }
 
   delete(obj: Product) {
-    const dialogRef = this.dialog.open(DialogConfirmDeleteComponent, {width: '350px', data: obj});
+    const dataDialog = {
+      message: `Do you want to remove the ${obj.name} product?`,
+      title: 'Remove Product',
+      ...obj
+    };
+    const dialogRef = this.dialog.open(DialogConfirmDeleteComponent, {width: '450px', data: dataDialog});
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.productService.delete(obj)
+        this.service.delete(obj)
         .then(() => {
           this.snackBar.open('Product removed.', 'Ok', {duration: 2000});
         })
         .catch((error) => {
-          this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
+          this.snackBar.open('Error on delete the product', 'Ok', {duration: 2000});
         });
       }
     });
@@ -93,7 +106,7 @@ productForm = this.fb.group({
 
   filter(event) {
     if (event.target.value && event.target.value !== '') {
-      this.filterProducts$ = this.productService.searchByName(event.target.value);
+      this.filterProducts$ = this.service.searchByName(event.target.value);
     } else {
       this.filterProducts$ = null;
     }
