@@ -54,14 +54,9 @@ export abstract class BaseResourceFormComponent<T extends BaseResourceModel> imp
         const resource: T = this.resourceService.castObject(this.resourceForm.getRawValue());
         this.action = true;
         this.resourceForm.disable();
-        this.resourceService.create(resource)
-            .then(
-                resource => { 
-                    this.actionsForSuccess(resource); 
-                    this.action = false; 
-                    this.resourceForm.enable(); 
-                }, error => this.actionsForError(error)
-            );
+        this.actionsForSuccess(resource); 
+        this.action = false; 
+        this.resourceForm.enable(); 
     }
 
     protected actionsForSuccess(resource: T) {
