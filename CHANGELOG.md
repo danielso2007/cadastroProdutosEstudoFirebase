@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [1.1.0](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/compare/v1.0.0...v1.1.0) (2019-04-29)
+
+
+### Bug Fixes
+
+* Correção do framework de serviços. ([da8bbdc](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/commit/da8bbdc))
+
+
+### Features
+
+* Ajuste de estrutura do projeto. ([068db20](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/commit/068db20))
+* Ajuste de layout nas telas de produtos. ([b81e791](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/commit/b81e791))
+* Ajuste e finalização do framework. ([bd4d3c8](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/commit/bd4d3c8))
+* Criado components Updload e my files. ([5933e62](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/commit/5933e62))
+* Dialog para remoção de produtos. ([5d31a07](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/commit/5d31a07))
+* Lista e donwload de arquivos do firebase. ([c4db9a5](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/commit/c4db9a5))
+* Pequenos ajustes de layout. ([1ebd224](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/commit/1ebd224))
+* Upload de arquivos. ([5584332](https://github.com/danielso2007/cadastroProdutosEstudoFirebase/commit/5584332))
+
+
+
 # 1.0.0 (2019-04-25)
 
 
