@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import {
-
   MatAutocompleteModule,
   MatBadgeModule,
   MatBottomSheetModule,
@@ -85,9 +84,14 @@ const matModules = [
 @NgModule({
   declarations: [DialogConfirmDeleteComponent],
   entryComponents: [DialogConfirmDeleteComponent],
-  imports: [CommonModule, FormsModule, ...matModules],
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    MatProgressSpinnerModule, 
+    ...matModules],
   exports: [
     CommonModule,
+    MatProgressSpinnerModule,
     ReactiveFormsModule,
     FlexLayoutModule,
     ...matModules

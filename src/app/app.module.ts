@@ -9,6 +9,8 @@ import { CoreModule } from './core/core.module';
 
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFirestore, FirestoreSettingsToken} from '@angular/fire/firestore';
+import { LoginModule } from './pages/login/login.module';
+import { AngularFireAuthModule } from '@angular/fire/auth';
 const firebaseAppConfig: FirebaseAppConfig = environment.fireBaseConfig;
 
 
@@ -18,7 +20,9 @@ const firebaseAppConfig: FirebaseAppConfig = environment.fireBaseConfig;
   ],
   imports: [
     CoreModule,
+    LoginModule,
     AppRoutingModule,
+    AngularFireAuthModule,
     AngularFireModule.initializeApp(firebaseAppConfig),
     AngularFireStorageModule
   ],

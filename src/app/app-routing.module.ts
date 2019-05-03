@@ -5,7 +5,7 @@ const routes: Routes = [
   {
     path: 'dashboard', loadChildren: './pages/dashboard/dashboard.module#DashboardModule'
   },
-  { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+  { path: '', redirectTo: 'login', pathMatch: 'full' }
 ];
 
 @NgModule({
