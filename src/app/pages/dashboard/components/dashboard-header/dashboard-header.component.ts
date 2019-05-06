@@ -18,9 +18,18 @@ import { DialogConfirmDeleteComponent } from 'src/app/shared/components/dialog-c
 
         <span class="example-spacer"></span>
 
-        <button mat-icon-button id='sidenav_logout' (click)="onLogout()">
+        <mat-menu #appMenuProfile="matMenu">
+          <button mat-menu-item>
+            <mat-icon class="example-icon" aria-hidden="false" aria-label="Profile">perm_identity</mat-icon>
+            <span>Profile</span>
+          </button>
+          <button mat-menu-item id='sidenav_logout' (click)="onLogout()">
             <mat-icon class="example-icon" aria-hidden="false" aria-label="Exit to app">exit_to_app</mat-icon>
-        </button>
+            <span>Logout</span>
+          </button>
+        </mat-menu>
+
+        <button mat-icon-button [matMenuTriggerFor]="appMenuProfile"><img src="assets/images/user.png" alt="Avatar" class="avatar"></button>
 
     </mat-toolbar-row>
   </mat-toolbar>

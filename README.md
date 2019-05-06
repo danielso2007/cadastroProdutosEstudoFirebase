@@ -51,6 +51,7 @@ ng add @angular/material
 
 - [Getting started.](https://material.angular.io/guide/getting-started)
 - [Components.](https://material.angular.io/components/categories)
+- [Icones.](https://material.io/tools/icons/?style=baseline)
 
 # Firebase CLI
 
