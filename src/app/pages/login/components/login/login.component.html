@@ -45,6 +45,8 @@
         <button type="submit" mat-button color="primary" [disabled]="loginForm.invalid || !recaptchaIsValid || configs.isLoading">{{ configs.actionText }}</button>
         <button type="button" mat-button color="primary" [disabled]="configs.isLoading" (click)="changeAction()">{{ configs.buttonActionText }}</button>
 
+        <button type="button" *ngIf="configs.isLogin" mat-button color="primary" [disabled]="configs.isLoading" (click)="forgotPassword()">Forgot your password?</button>
+
       </form>
 
       <form class="g-recaptcha" [formGroup]="aFormGroup" *ngIf="exibirCapcha">

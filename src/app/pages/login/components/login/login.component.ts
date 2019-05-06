@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, Validators, FormBuilder, FormGroup } from '@angular/forms';
-import { takeWhile } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { environment } from 'src/environments/environment';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-login',
@@ -33,8 +33,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private nameControl = new FormControl('', [Validators.required, Validators.minLength(5)]);
 
-
   constructor(
+    private title: Title,
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private router: Router,
@@ -47,12 +47,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.title.setTitle('Login');
     this.createForm();
-    const userData: any = {} //this.authService.getRememberMe();
-    if (userData) {
-      this.email.setValue(userData.email);
-      this.password.setValue(userData.password);
-    }
     this.aFormGroup = this.formBuilder.group({
       recaptcha: ['', Validators.required]
     });
@@ -123,5 +119,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.snackBar.open('CAPTCHA has expired, try again, or upgrade to this page', 'Done', { duration: 5000, verticalPosition: 'top' });
   }
 
+  forgotPassword(): void {
+    this.router.navigate(['forgot-password']);
+  }
 
 }
