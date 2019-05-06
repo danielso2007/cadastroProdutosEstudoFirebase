@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { MatDialog, MatSnackBar } from '@angular/material';
+import { MatDialog, MatSnackBar, SimpleSnackBar, MatSnackBarRef } from '@angular/material';
 import { DialogConfirmDeleteComponent } from 'src/app/shared/components/dialog-confirm-delete/dialog-confirm-delete.component';
 
 @Component({
@@ -44,15 +44,31 @@ import { DialogConfirmDeleteComponent } from 'src/app/shared/components/dialog-c
   `,
   styleUrls: ['./dashboard-home.component.scss']
 })
-export class DashboardHomeComponent {
+export class DashboardHomeComponent implements OnDestroy {
 
-  constructor(public authService: AuthService,
+  snackBarAlert: MatSnackBarRef<SimpleSnackBar>;
+
+  constructor(
+    public authService: AuthService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar) { }
+    private snackBar: MatSnackBar) {
+
+      if (!this.authService.currentUser().emailVerified) {
+        this.snackBarAlert = this.snackBar.open('Please check your email for activation of your account. If you have already done so, please log in again.',
+        null,
+        {duration: 60000});
+      }
+  }
 
   onLogout(sidenav: MatSidenav): void {
     sidenav.close();
     this.authService.onLogout(this.snackBar, this.dialog, DialogConfirmDeleteComponent);
+  }
+
+  ngOnDestroy() {
+    if(this.snackBarAlert) {
+      this.snackBarAlert.dismiss();
+    }
   }
 
 }

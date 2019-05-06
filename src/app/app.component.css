@@ -58,3 +58,7 @@
 .mat-dialog-no-padding .mat-dialog-container {
   padding: 0;
 }
+
+.mat-snack-bar-alert {
+  background: #ff0000;
+}

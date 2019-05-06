@@ -20,18 +20,7 @@ export class AuthService {
     private userService: UserService) {
   }
 
-  getAuthUser(): void {
-    this.firebaseAuth.auth.onAuthStateChanged((user: firebase.User) => {
-      if (user) {
-        this.createAuthuser(user);
-      } else {
-        // No user is signed in.
-        this.logout();
-      }
-    });
-  }
-
-  currentUser() {
+  currentUser(): firebase.User {
     const user: firebase.User = this.firebaseAuth.auth.currentUser;
     if (user) {
       this.createAuthuser(user);
@@ -88,6 +77,9 @@ export class AuthService {
         if (userCredential.additionalUserInfo.isNewUser) {
 
         }
+        if (!userCredential.user.emailVerified) {
+          this.sendEmailVerification();
+        }
         this.createAuthuser(userCredential.user);
         this.userService.searchByEmail(userCredential.user.email)
         .subscribe((users: User[]) => {
@@ -108,6 +100,7 @@ export class AuthService {
         this.authUser.name = user.name;
         this.authUser.providerId = userCredential.additionalUserInfo.providerId;
         this.userService.save(this.authUser);
+        this.sendEmailVerification();
       })
       .catch(this.handlePromiseError);
   }
