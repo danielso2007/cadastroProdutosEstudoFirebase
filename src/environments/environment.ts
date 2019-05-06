@@ -6,6 +6,7 @@ import { _env } from '../../.env';
 
 export const environment = {
   production: false,
+  SITEKEY: '6LcvOXYUAAAAAM-r5i6JgCGXw03S155FSVkR9Gd2',
   fireBaseConfig: {
     apiKey: _env.apiKey,
     authDomain: _env.authDomain,

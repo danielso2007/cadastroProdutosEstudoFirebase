@@ -42,10 +42,25 @@
           </mat-error>
         </mat-form-field>
 
-        <button type="submit" mat-button color="primary" [disabled]="loginForm.invalid || configs.isLoading">{{ configs.actionText }}</button>
+        <button type="submit" mat-button color="primary" [disabled]="loginForm.invalid || !recaptchaIsValid || configs.isLoading">{{ configs.actionText }}</button>
         <button type="button" mat-button color="primary" [disabled]="configs.isLoading" (click)="changeAction()">{{ configs.buttonActionText }}</button>
 
       </form>
+
+      <form class="g-recaptcha" [formGroup]="aFormGroup">
+        <ngx-recaptcha2
+          [siteKey]="siteKey"
+          [size]="size"
+          [hl]="lang"
+          [theme]="theme"
+          [type]="type"
+          (expire)="handleExpire()"
+          (load)="handleLoad()"
+          (success)="handleSuccess($event)"
+          formControlName="recaptcha">
+        </ngx-recaptcha2>
+      </form>
+
     </mat-card-content>
   </mat-card>
 

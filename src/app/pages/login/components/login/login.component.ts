@@ -4,15 +4,17 @@ import { takeWhile } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements  OnInit, OnDestroy {
+export class LoginComponent implements OnInit, OnDestroy {
 
   loginForm: FormGroup;
+  aFormGroup: FormGroup;
 
   configs = {
     isLogin: true,
@@ -20,6 +22,14 @@ export class LoginComponent implements  OnInit, OnDestroy {
     buttonActionText: 'Create account',
     isLoading: false
   };
+
+  public readonly siteKey = environment.SITEKEY;
+  theme: 'light' | 'dark' = 'light';
+  size: 'compact' | 'normal' = 'normal';
+  lang = 'pt-BR';
+  type: 'image' | 'audio';
+  recaptchaIsValid = false;
+  exibirCapcha = true;
 
   private nameControl = new FormControl('', [Validators.required, Validators.minLength(5)]);
   private alive = true;
@@ -29,7 +39,12 @@ export class LoginComponent implements  OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar
-    ) {}
+  ) {
+    // if (!environment.production) {
+    //   this.exibirCapcha = false;
+    //   this.recaptchaIsValid = true;
+    // }
+  }
 
   ngOnInit() {
     this.createForm();
@@ -38,6 +53,9 @@ export class LoginComponent implements  OnInit, OnDestroy {
       this.email.setValue(userData.email);
       this.password.setValue(userData.password);
     }
+    this.aFormGroup = this.formBuilder.group({
+      recaptcha: ['', Validators.required]
+    });
   }
 
   ngOnDestroy() {
@@ -55,9 +73,9 @@ export class LoginComponent implements  OnInit, OnDestroy {
     this.configs.isLoading = true;
     this.loginForm.disable();
 
-    const operation = (this.configs.isLogin) ? 
-        this.authService.signinUser(this.loginForm.value) : 
-        this.authService.signupUser(this.loginForm.value);
+    const operation = (this.configs.isLogin) ?
+      this.authService.signinUser(this.loginForm.value) :
+      this.authService.signupUser(this.loginForm.value);
 
     operation
       .then(
@@ -78,7 +96,7 @@ export class LoginComponent implements  OnInit, OnDestroy {
           console.log(err);
           this.loginForm.enable();
           this.configs.isLoading = false;
-          this.snackBar.open(err, 'Done', {duration: 5000, verticalPosition: 'top'});
+          this.snackBar.open(err, 'Done', { duration: 5000, verticalPosition: 'top' });
         }
       );
   }
@@ -93,5 +111,19 @@ export class LoginComponent implements  OnInit, OnDestroy {
     this.configs.buttonActionText = !this.configs.isLogin ? 'Already have account' : 'Create account';
     !this.configs.isLogin ? this.loginForm.addControl('name', this.nameControl) : this.loginForm.removeControl('name');
   }
+
+  handleSuccess(captchaResponse: string): void {
+    this.recaptchaIsValid = true;
+  }
+
+  handleLoad(): void {
+    this.recaptchaIsValid = false;
+  }
+
+  handleExpire(): void {
+    this.recaptchaIsValid = false;
+    this.snackBar.open('CAPTCHA has expired, try again, or upgrade to this page', 'Done', { duration: 5000, verticalPosition: 'top' });
+  }
+
 
 }

@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav, MatDialog, MatSnackBar } from '@angular/material';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { DialogConfirmDeleteComponent } from 'src/app/shared/components/dialog-confirm-delete/dialog-confirm-delete.component';
 
 @Component({
   selector: 'app-dashboard-header',
@@ -30,11 +32,14 @@ export class DashboardHeaderComponent {
   @Input() sidenav: MatSidenav;
 
   constructor(
-    public title: Title
+    public title: Title,
+    public authService: AuthService,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) { }
 
   onLogout(): void {
-
+    this.authService.onLogout(this.snackBar, this.dialog, DialogConfirmDeleteComponent);
   }
 
 }

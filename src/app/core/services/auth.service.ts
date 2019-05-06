@@ -4,6 +4,7 @@ import { User } from '../models/user.model';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { map, mergeMap } from 'rxjs/operators';
+import { MatSnackBar, MatDialog } from '@angular/material';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -29,10 +30,12 @@ export class AuthService {
     const user: firebase.User = this.firebaseAuth.auth.currentUser;
     if (user) {
       this.createAuthuser(user);
+      return user;
       // User is signed in.
     } else {
       // No user is signed in.
       this.logout();
+      return null;
     }
   }
 
@@ -96,6 +99,7 @@ export class AuthService {
         this.authUser.providerId = userCredential.additionalUserInfo.providerId;
         this.authUser.credential = userCredential.credential;
         this.authUser.operationType = userCredential.operationType;
+        this.updateProfile(name, null);
       })
       .catch(this.handlePromiseError);
   }
@@ -111,6 +115,70 @@ export class AuthService {
 
   protected handleObservableError(error: any): Observable<any> {
     return Observable.throw(error);
+  }
+
+  updateProfile(displayName: string, photoURL: string): void {
+    this.currentUser().updateProfile({
+      displayName: displayName,
+      photoURL: photoURL
+    }).then(() => {
+      // Update successful.
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  updateEmail(email: string): void {
+    this.currentUser().updateEmail(email).then(() => {
+      // Update successful.
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  sendEmailVerification(): void {
+    this.firebaseAuth.auth.useDeviceLanguage();
+    this.currentUser().sendEmailVerification().then(() => {
+      // Email sent.
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  updatePassword(newPassword: string): void {
+    this.currentUser().updatePassword(newPassword).then(() => {
+      // Update successful.
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  sendPasswordResetEmail(emailAddress: string): void {
+    this.firebaseAuth.auth.useDeviceLanguage();
+    this.firebaseAuth.auth.sendPasswordResetEmail(emailAddress).then(() => {
+      // Email sent.
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  onLogout(snackBar: MatSnackBar, matDialog: MatDialog, dialog: any): void {
+    const dataDialog = {
+      message: 'Do you want to quit the application?',
+      title: 'Logout',
+      cancelLabel: 'No',
+      okLabel: 'Yes'
+    };
+    const dialogRef = matDialog.open(dialog, {width: '360px', data: dataDialog});
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.logout()
+        .catch((error) => {
+          console.error(error);
+          snackBar.open('Error logging out', 'Ok', {duration: 2000});
+        });
+      }
+    });
   }
 
 }

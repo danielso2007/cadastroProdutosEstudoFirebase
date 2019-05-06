@@ -18,9 +18,7 @@ export class AuthGuardService implements CanActivate, CanActivateChild, CanLoad 
   }
 
   canLoad(route: Route): Observable<boolean> {
-    console.log(route.path);
-    const url = window.location.pathname;
-    return this.checkAuthState(url).pipe(take(1));
+    return this.checkAuthState(window.location.pathname).pipe(take(1));
   }
 
   private checkAuthState(url: string): Observable<boolean> {

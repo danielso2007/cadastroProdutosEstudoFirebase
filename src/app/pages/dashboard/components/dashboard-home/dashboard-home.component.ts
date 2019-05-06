@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
+import { AuthService } from 'src/app/core/services/auth.service';
+import { MatDialog, MatSnackBar } from '@angular/material';
+import { DialogConfirmDeleteComponent } from 'src/app/shared/components/dialog-confirm-delete/dialog-confirm-delete.component';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -43,10 +46,13 @@ import { MatSidenav } from '@angular/material/sidenav';
 })
 export class DashboardHomeComponent {
 
-  constructor() { }
+  constructor(public authService: AuthService,
+    public dialog: MatDialog,
+    private snackBar: MatSnackBar) { }
 
   onLogout(sidenav: MatSidenav): void {
     sidenav.close();
+    this.authService.onLogout(this.snackBar, this.dialog, DialogConfirmDeleteComponent);
   }
 
 }

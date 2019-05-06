@@ -108,3 +108,7 @@ The `.env.ts` file is set to` .gitignore`.
 # Firebase Authentication
 
 - [Documentation.](https://firebase.google.com/docs/auth/)
+
+# reCAPTCHA v2
+
+- [Documentation.](https://developers.google.com/recaptcha/docs/display)
