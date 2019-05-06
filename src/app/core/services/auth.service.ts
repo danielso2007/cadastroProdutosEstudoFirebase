@@ -3,8 +3,10 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from '../models/user.model';
 import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, first } from 'rxjs/operators';
 import { MatSnackBar, MatDialog } from '@angular/material';
+import { UserService } from './user.service';
+import { promise } from 'protractor';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -12,7 +14,10 @@ export class AuthService {
   authUser: User;
   redirectUrl: string;
 
-  constructor(private router: Router, private firebaseAuth: AngularFireAuth) {
+  constructor(
+    private router: Router, 
+    private firebaseAuth: AngularFireAuth,
+    private userService: UserService) {
   }
 
   getAuthUser(): void {
@@ -46,7 +51,7 @@ export class AuthService {
           return user !== null;
         }),
         mergeMap(is => (is) ? of(is) : of(is))
-      );
+      ).pipe(first());
   }
 
   get isAuthenticated(): Promise<boolean> {
@@ -66,40 +71,43 @@ export class AuthService {
     this.authUser = {
       'name': '',
       'email': user.email,
-      'id': user.uid,
-      'photo': '',
-      'isNewUser': null,
-      'providerId': null,
-      'credential': null,
-      'operationType': null,
+      'id': null,
+      'providerId': user.providerId,
       'emailVerified': user.emailVerified,
       'isAnonymous': user.isAnonymous,
-      'creationTime': new Date(user.metadata.creationTime),
-      'lastSignInTime': new Date(user.metadata.lastSignInTime),
+      'lastSignInTime': new Date().getTime()  ,
       'phoneNumber': user.phoneNumber,
       'photoURL': user.photoURL,
-      'uid': user.uid,
-      'isAuthenticated': true
-    }
+      'uid': user.uid
+    };
   }
 
   signinUser(user: { email: string; password: string; }): Promise<firebase.auth.UserCredential> {
     return this.firebaseAuth.auth.signInWithEmailAndPassword(user.email, user.password)
       .then((userCredential: firebase.auth.UserCredential) => {
+        if (userCredential.additionalUserInfo.isNewUser) {
+
+        }
         this.createAuthuser(userCredential.user);
+        this.userService.searchByEmail(userCredential.user.email)
+        .subscribe((users: User[]) => {
+          const user = users[0];
+          user.providerId = userCredential.additionalUserInfo.providerId;
+          user.lastSignInTime = this.authUser.lastSignInTime;
+          user.emailVerified = this.authUser.emailVerified;
+          this.userService.update(user).catch(this.handlePromiseError);
+        });
       })
       .catch(this.handlePromiseError);
   }
 
-  signupUser(user: { name: String; email: string; password: string; }): Promise<firebase.auth.UserCredential> {
+  signupUser(user: { name: string; email: string; password: string; }): Promise<firebase.auth.UserCredential> {
     return this.firebaseAuth.auth.createUserWithEmailAndPassword(user.email, user.password)
-      .then(userCredential => {
+      .then((userCredential: firebase.auth.UserCredential) => {
         this.createAuthuser(userCredential.user);
-        this.authUser.isNewUser = userCredential.additionalUserInfo.isNewUser;
+        this.authUser.name = user.name;
         this.authUser.providerId = userCredential.additionalUserInfo.providerId;
-        this.authUser.credential = userCredential.credential;
-        this.authUser.operationType = userCredential.operationType;
-        this.updateProfile(name, null);
+        this.userService.save(this.authUser);
       })
       .catch(this.handlePromiseError);
   }
@@ -117,49 +125,29 @@ export class AuthService {
     return Observable.throw(error);
   }
 
-  updateProfile(displayName: string, photoURL: string): void {
-    this.currentUser().updateProfile({
+  updateProfile(displayName: string, photoURL: string): Promise<void> {
+    return this.currentUser().updateProfile({
       displayName: displayName,
       photoURL: photoURL
-    }).then(() => {
-      // Update successful.
-    }).catch((error) => {
-      console.error(error);
     });
   }
 
-  updateEmail(email: string): void {
-    this.currentUser().updateEmail(email).then(() => {
-      // Update successful.
-    }).catch((error) => {
-      console.error(error);
-    });
+  updateEmail(email: string): Promise<void> {
+    return this.currentUser().updateEmail(email);
   }
 
-  sendEmailVerification(): void {
+  sendEmailVerification(): Promise<void> {
     this.firebaseAuth.auth.useDeviceLanguage();
-    this.currentUser().sendEmailVerification().then(() => {
-      // Email sent.
-    }).catch((error) => {
-      console.error(error);
-    });
+    return this.currentUser().sendEmailVerification();
   }
 
-  updatePassword(newPassword: string): void {
-    this.currentUser().updatePassword(newPassword).then(() => {
-      // Update successful.
-    }).catch((error) => {
-      console.error(error);
-    });
+  updatePassword(newPassword: string): Promise<void> {
+    return this.currentUser().updatePassword(newPassword);
   }
 
-  sendPasswordResetEmail(emailAddress: string): void {
+  sendPasswordResetEmail(emailAddress: string): Promise<void> {
     this.firebaseAuth.auth.useDeviceLanguage();
-    this.firebaseAuth.auth.sendPasswordResetEmail(emailAddress).then(() => {
-      // Email sent.
-    }).catch((error) => {
-      console.error(error);
-    });
+    return this.firebaseAuth.auth.sendPasswordResetEmail(emailAddress);
   }
 
   onLogout(snackBar: MatSnackBar, matDialog: MatDialog, dialog: any): void {

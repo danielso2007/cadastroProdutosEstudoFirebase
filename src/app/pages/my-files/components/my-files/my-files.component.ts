@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { MyFileService } from '../../shared/my.file.service';
 import { Observable } from 'rxjs';
 import { FileProduct } from 'src/app/pages/upload-files/shared/file.model';
-import { map } from 'rxjs/operators';
+import { map, first } from 'rxjs/operators';
 import { MatDialog, MatSnackBar } from '@angular/material';
 import { DialogConfirmDeleteComponent } from 'src/app/shared/components/dialog-confirm-delete/dialog-confirm-delete.component';
 
@@ -12,7 +12,7 @@ import { DialogConfirmDeleteComponent } from 'src/app/shared/components/dialog-c
   templateUrl: './my-files.component.html',
   styleUrls: ['./my-files.component.css']
 })
-export class MyFilesComponent implements OnInit {
+export class MyFilesComponent implements OnInit, OnDestroy {
 
   list$ = new Observable<FileProduct[]>();
   displayedColumns = ['fileName', 'size', 'createAt', 'operations'];
@@ -36,6 +36,10 @@ export class MyFilesComponent implements OnInit {
     this.title.setTitle("My files");
   }
 
+  ngOnDestroy() {
+    this.list$.subscribe().unsubscribe();
+  }
+
   download(obj: FileProduct): void {
     this.service.downloadFile(obj);
   }
@@ -48,7 +52,7 @@ export class MyFilesComponent implements OnInit {
     };
     const dialogRef = this.dialog.open(DialogConfirmDeleteComponent, {width: '550px', data: dataDialog});
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().pipe(first()).subscribe(result => {
       if (result) {
         this.service.delete(obj).then(() => {
           this.service.deleteFile(obj);

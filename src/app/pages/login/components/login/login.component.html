@@ -47,7 +47,7 @@
 
       </form>
 
-      <form class="g-recaptcha" [formGroup]="aFormGroup">
+      <form class="g-recaptcha" [formGroup]="aFormGroup" *ngIf="exibirCapcha">
         <ngx-recaptcha2
           [siteKey]="siteKey"
           [size]="size"

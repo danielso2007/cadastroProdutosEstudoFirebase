@@ -1,6 +1,6 @@
 import { BaseResourceModel } from "../models/base-resource.model";
 import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, first } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreCollection, DocumentChangeAction } from '@angular/fire/firestore';
 
 export abstract class BaseResourceService<T extends BaseResourceModel> {
@@ -46,7 +46,7 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
 
     getById(id: string): Observable<T> {
         return this.afs.collection(this.collectionsName, ref => ref.where('id', '==', id))
-        .valueChanges()
+        .valueChanges().pipe(first())
         .pipe(this.result());
     }
 

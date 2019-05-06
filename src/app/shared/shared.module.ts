@@ -42,7 +42,6 @@ import {
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { DialogConfirmDeleteComponent } from './components/dialog-confirm-delete/dialog-confirm-delete.component';
-import { DialogLogoutComponent } from './components/dialog-logout/dialog-logout.component';
 
 import { NgxCaptchaModule } from 'ngx-captcha';
 

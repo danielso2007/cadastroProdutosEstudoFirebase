@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivateChild, CanActivate, CanLoad, Router, ActivatedRouteSnapshot, RouterStateSnapshot, Route } from '@angular/router';
 import { AuthService } from './auth.service';
 import { Observable } from 'rxjs';
-import { take, tap } from 'rxjs/operators';
+import { take, tap, first } from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class AuthGuardService implements CanActivate, CanActivateChild, CanLoad {
@@ -24,6 +24,7 @@ export class AuthGuardService implements CanActivate, CanActivateChild, CanLoad 
   private checkAuthState(url: string): Observable<boolean> {
     return this.authService.authenticated()
     .pipe(
+      first(),
       tap(is => {
         if (!is) {
           this.authService.redirectUrl = url;

@@ -1,18 +1,19 @@
 import { Product } from './../../shared/product.model';
 import { ProductService } from './../../shared/product.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs';
 import { DialogConfirmDeleteComponent } from '../../../../shared/components/dialog-confirm-delete/dialog-confirm-delete.component';
 import { Title } from '@angular/platform-browser';
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-products',
   templateUrl: './products.component.html',
   styleUrls: ['./products.component.css']
 })
-export class ProductsComponent implements OnInit {
+export class ProductsComponent implements OnInit, OnDestroy {
 
 @ViewChild('name') productNameField: ElementRef;
 products$ = new Observable<Product[]>();
@@ -42,6 +43,10 @@ productForm = this.fb.group({
     this.title.setTitle('Product Registration');
   }
 
+  ngOnDestroy() {
+    this.products$.subscribe().unsubscribe();
+  }
+
   onSubmit() {
     let obj: Product = this.productForm.value;
     if (!obj.id) {
@@ -58,6 +63,7 @@ productForm = this.fb.group({
       this.cleanForm();
     })
     .catch((error) => {
+      console.error(error);
       this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
     });
   }
@@ -69,6 +75,7 @@ productForm = this.fb.group({
       this.cleanForm();
     })
     .catch((error) => {
+      console.error(error);
       this.snackBar.open('Error on submitting the product', 'Ok', {duration: 2000});
     });
   }
@@ -91,13 +98,14 @@ productForm = this.fb.group({
     };
     const dialogRef = this.dialog.open(DialogConfirmDeleteComponent, {width: '450px', data: dataDialog});
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().pipe(first()).subscribe(result => {
       if (result) {
         this.service.delete(obj)
         .then(() => {
           this.snackBar.open('Product removed.', 'Ok', {duration: 2000});
         })
         .catch((error) => {
+          console.error(error);
           this.snackBar.open('Error on delete the product', 'Ok', {duration: 2000});
         });
       }
@@ -106,7 +114,7 @@ productForm = this.fb.group({
 
   filter(event) {
     if (event.target.value && event.target.value !== '') {
-      this.filterProducts$ = this.service.searchByName(event.target.value);
+      this.filterProducts$ = this.service.searchByName(event.target.value).pipe(first());
     } else {
       this.filterProducts$ = null;
     }

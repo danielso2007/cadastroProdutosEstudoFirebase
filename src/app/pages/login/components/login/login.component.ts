@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   exibirCapcha = true;
 
   private nameControl = new FormControl('', [Validators.required, Validators.minLength(5)]);
-  private alive = true;
+
 
   constructor(
     private formBuilder: FormBuilder,
@@ -40,10 +40,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router,
     private snackBar: MatSnackBar
   ) {
-    // if (!environment.production) {
-    //   this.exibirCapcha = false;
-    //   this.recaptchaIsValid = true;
-    // }
+    if (!environment.production) {
+      this.exibirCapcha = false;
+      this.recaptchaIsValid = true;
+    }
   }
 
   ngOnInit() {
@@ -59,7 +59,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.alive = false;
   }
 
   createForm(): void {
@@ -82,7 +81,6 @@ export class LoginComponent implements OnInit, OnDestroy {
         res => {
           this.loginForm.enable();
           const redirect: string = this.authService.redirectUrl || '/dashboard';
-
           this.authService.isAuthenticated
             .then((is: boolean) => {
               if (is) {

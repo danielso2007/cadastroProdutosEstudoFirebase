@@ -44,7 +44,7 @@ export class DashboardResourcesComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    this.title.setTitle('Home');
+    this.title.setTitle('Dashboard');
     if (this.isMenu) {
       this.resources.unshift({
         url: '/dashboard',
