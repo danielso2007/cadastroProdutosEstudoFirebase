@@ -24,7 +24,8 @@ export class AuthGuardService implements CanActivate, CanActivateChild, CanLoad 
   }
 
   private checkAuthState(url: string): Observable<boolean> {
-    return this.authService.isAuthenticated.pipe(
+    return this.authService.authenticated()
+    .pipe(
       tap(is => {
         if (!is) {
           this.authService.redirectUrl = url;

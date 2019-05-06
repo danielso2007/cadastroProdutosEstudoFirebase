@@ -66,8 +66,7 @@ export class LoginComponent implements  OnInit, OnDestroy {
           const redirect: string = this.authService.redirectUrl || '/dashboard';
 
           this.authService.isAuthenticated
-            .pipe(takeWhile(() => this.alive))
-            .subscribe((is: boolean) => {
+            .then((is: boolean) => {
               if (is) {
                 this.router.navigate([redirect]);
                 this.authService.redirectUrl = null;
@@ -93,10 +92,6 @@ export class LoginComponent implements  OnInit, OnDestroy {
     this.configs.actionText = !this.configs.isLogin ? 'SignUp' : 'SignIn';
     this.configs.buttonActionText = !this.configs.isLogin ? 'Already have account' : 'Create account';
     !this.configs.isLogin ? this.loginForm.addControl('name', this.nameControl) : this.loginForm.removeControl('name');
-  }
-
-  onKeepSigned(): void {
-    this.authService.toggleKeepSigned();
   }
 
 }

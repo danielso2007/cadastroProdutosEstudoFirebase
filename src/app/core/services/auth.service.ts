@@ -1,70 +1,89 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { User } from '../models/user.model';
-import { Observable, ReplaySubject, of, throwError, Subscription } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
-import { tap, take, map, catchError, mergeMap } from 'rxjs/operators';
-import { StorageKeys } from '../storage-keys';
+import { map, mergeMap } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
   authUser: User;
-  private _isAuthenticated = new ReplaySubject<boolean>(1);
   redirectUrl: string;
-  keepSigned: boolean;
 
   constructor(private router: Router, private firebaseAuth: AngularFireAuth) {
   }
 
-  get isAuthenticated(): Observable<boolean> {
-    return this._isAuthenticated.asObservable();
+  getAuthUser(): void {
+    this.firebaseAuth.auth.onAuthStateChanged((user: firebase.User) => {
+      if (user) {
+        this.createAuthuser(user);
+      } else {
+        // No user is signed in.
+        this.logout();
+      }
+    });
   }
 
-  autoLogin(): Observable<void> {
-    if (!this.keepSigned) {
-      this._isAuthenticated.next(false);
-      window.localStorage.removeItem(StorageKeys.AUTH_TOKEN);
-      return of();
+  currentUser() {
+    const user: firebase.User = this.firebaseAuth.auth.currentUser;
+    if (user) {
+      this.createAuthuser(user);
+      // User is signed in.
+    } else {
+      // No user is signed in.
+      this.logout();
     }
+  }
 
-    return this.authenticated()
+  authenticated(): Observable<boolean> {
+    return this.firebaseAuth.authState
       .pipe(
-        tap((authData: any) => {
-          const token = window.localStorage.getItem(StorageKeys.AUTH_TOKEN);
-          this.setAuthState(authData, true);
+        map((user: firebase.User) => {
+          return user !== null;
         }),
-        mergeMap(res => of()),
-        catchError(error => {
-          this.setAuthState(null);
-          return throwError(error);
-        })
+        mergeMap(is => (is) ? of(is) : of(is))
       );
+  }
+
+  get isAuthenticated(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.firebaseAuth.authState.subscribe((user: firebase.User) => {
+        if (user) {
+          this.createAuthuser(user);
+          resolve(true);
+        } else {
+          reject(false);
+        }
+      });
+    });
+  }
+
+  private createAuthuser(user: firebase.User): void {
+    this.authUser = {
+      'name': '',
+      'email': user.email,
+      'id': user.uid,
+      'photo': '',
+      'isNewUser': null,
+      'providerId': null,
+      'credential': null,
+      'operationType': null,
+      'emailVerified': user.emailVerified,
+      'isAnonymous': user.isAnonymous,
+      'creationTime': new Date(user.metadata.creationTime),
+      'lastSignInTime': new Date(user.metadata.lastSignInTime),
+      'phoneNumber': user.phoneNumber,
+      'photoURL': user.photoURL,
+      'uid': user.uid,
+      'isAuthenticated': true
+    }
   }
 
   signinUser(user: { email: string; password: string; }): Promise<firebase.auth.UserCredential> {
     return this.firebaseAuth.auth.signInWithEmailAndPassword(user.email, user.password)
       .then((userCredential: firebase.auth.UserCredential) => {
-        this.authUser = {
-          'name': '',
-          'email': userCredential.user.email,
-          'id': userCredential.user.uid,
-          'photo': '',
-          'isNewUser': userCredential.additionalUserInfo.isNewUser,
-          'providerId': userCredential.additionalUserInfo.providerId,
-          'credential': userCredential.credential,
-          'operationType': userCredential.operationType,
-          'emailVerified': userCredential.user.emailVerified,
-          'isAnonymous': userCredential.user.isAnonymous,
-          'creationTime': new Date(userCredential.user.metadata.creationTime),
-          'lastSignInTime': new Date(userCredential.user.metadata.lastSignInTime),
-          'phoneNumber': userCredential.user.phoneNumber,
-          'photoURL': userCredential.user.photoURL,
-          'uid': userCredential.user.uid,
-          'isAuthenticated': true
-        }
-        this.setAuthState(this.authUser, true);
-        return userCredential;
+        this.createAuthuser(userCredential.user);
       })
       .catch(this.handlePromiseError);
   }
@@ -72,53 +91,18 @@ export class AuthService {
   signupUser(user: { name: String; email: string; password: string; }): Promise<firebase.auth.UserCredential> {
     return this.firebaseAuth.auth.createUserWithEmailAndPassword(user.email, user.password)
       .then(userCredential => {
-        this.authUser = {
-          'name': '',
-          'email': userCredential.user.email,
-          'id': userCredential.user.uid,
-          'photo': '',
-          'isNewUser': userCredential.additionalUserInfo.isNewUser,
-          'providerId': userCredential.additionalUserInfo.providerId,
-          'credential': userCredential.credential,
-          'operationType': userCredential.operationType,
-          'emailVerified': userCredential.user.emailVerified,
-          'isAnonymous': userCredential.user.isAnonymous,
-          'creationTime': new Date(userCredential.user.metadata.creationTime),
-          'lastSignInTime': new Date(userCredential.user.metadata.lastSignInTime),
-          'phoneNumber': userCredential.user.phoneNumber,
-          'photoURL': userCredential.user.photoURL,
-          'uid': userCredential.user.uid,
-          'isAuthenticated': true
-        }
-        this.setAuthState(this.authUser, true);
-        return userCredential;
+        this.createAuthuser(userCredential.user);
+        this.authUser.isNewUser = userCredential.additionalUserInfo.isNewUser;
+        this.authUser.providerId = userCredential.additionalUserInfo.providerId;
+        this.authUser.credential = userCredential.credential;
+        this.authUser.operationType = userCredential.operationType;
       })
       .catch(this.handlePromiseError);
   }
 
   logout(): Promise<void> {
-    this.keepSigned = false;
-    this._isAuthenticated.next(false);
     this.router.navigate(['/login']);
     return this.firebaseAuth.auth.signOut();
-  }
-
-  private authenticated(): Observable<{ id: string, isAuthenticated: boolean }> {
-    return this.firebaseAuth.authState
-      .pipe(
-        map((user: firebase.User) => {
-          return {
-            id: 'XXXX',
-            isAuthenticated: user !== null
-          };
-        }),
-        mergeMap(authData => (authData.isAuthenticated) ? of(authData) : throwError(new Error('Invalid token!')))
-      );
-  }
-
-  toggleKeepSigned(): void {
-    this.keepSigned = !this.keepSigned;
-    window.localStorage.setItem( StorageKeys.KEEP_SIGNED, this.keepSigned.toString());
   }
 
   protected handlePromiseError(error: any): Promise<any> {
@@ -128,50 +112,5 @@ export class AuthService {
   protected handleObservableError(error: any): Observable<any> {
     return Observable.throw(error);
   }
-
-  private setAuthState(authData: User, isRefresh: boolean = false): void {
-    if (authData.isAuthenticated) {
-      this._isAuthenticated.next(authData.isAuthenticated);
-      return;
-    }
-    this._isAuthenticated.next(false);
-  }
-
-  /**
-     * Sends an email verification to the user.
-     */
-    sendEmailVerification() {
-      // [START sendemailverification]
-      this.firebaseAuth.auth.currentUser.sendEmailVerification().then(function () {
-        // Email Verification sent!
-        // [START_EXCLUDE]
-        alert('Email Verification Sent!');
-        // [END_EXCLUDE]
-      });
-      // [END sendemailverification]
-    }
-  
-    sendPasswordReset(email: string) {
-      // [START sendpasswordemail]
-      this.firebaseAuth.auth.sendPasswordResetEmail(email).then(function () {
-        // Password Reset Email Sent!
-        // [START_EXCLUDE]
-        alert('Password Reset Email Sent!');
-        // [END_EXCLUDE]
-      }).catch(function (error) {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // [START_EXCLUDE]
-        if (errorCode == 'auth/invalid-email') {
-          alert(errorMessage);
-        } else if (errorCode == 'auth/user-not-found') {
-          alert(errorMessage);
-        }
-        console.log(error);
-        // [END_EXCLUDE]
-      });
-      // [END sendpasswordemail];
-    }
 
 }

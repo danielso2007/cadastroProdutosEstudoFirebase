@@ -10,7 +10,7 @@ export class AutoLoginGuardService implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
-    return this.authService.isAuthenticated
+    return this.authService.authenticated()
       .pipe(
         tap(is => (is) ? this.router.navigate(['/dashboard']) : null),
         map(is => !is)
