@@ -125,6 +125,14 @@ export class AuthService {
     });
   }
 
+  updateProfileDisplayName(displayName: string): Promise<void> {
+    return this.currentUser().updateProfile({displayName: displayName});
+  }
+
+  updateProfilePhotoURL(photoURL: string): Promise<void> {
+    return this.currentUser().updateProfile({photoURL: photoURL});
+  }
+
   updateEmail(email: string): Promise<void> {
     return this.currentUser().updateEmail(email);
   }

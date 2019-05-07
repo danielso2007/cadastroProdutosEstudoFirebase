@@ -5,17 +5,17 @@ import { AngularFirestore, AngularFirestoreCollection, DocumentChangeAction } fr
 
 export abstract class BaseResourceService<T extends BaseResourceModel> {
 
-    protected collections: AngularFirestoreCollection<T> = 
-            this.afs.collection<T>(this.collectionsName, ref => ref.orderBy(this.orderByField || 'id'));
+    protected collections: AngularFirestoreCollection<T> =
+        this.afs.collection<T>(this.collectionsName, ref => ref.orderBy(this.orderByField || 'id'));
 
     constructor(
-        protected afs: AngularFirestore, 
+        protected afs: AngularFirestore,
         protected collectionsName: string,
         protected orderByField: string,
         protected testType: new () => T) {
     }
 
-    getNew() : T {
+    getNew(): T {
         return new this.testType();
     }
 
@@ -36,7 +36,24 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
 
     getAll(): Observable<T[]> {
         return this.collections.valueChanges()
-        .pipe(this.result());
+            .pipe(this.result());
+    }
+
+    getList(offset, startKey?, limit: number): Observable<T[]> {
+        return this.afs.collection<T>(
+            this.collectionsName,
+            ref => ref
+            .orderBy('name')
+            .startAt(name)
+            .endAt(name + '\uf8ff'))
+            .valueChanges();
+        return this.afs.list(`comments/${postId}`, {
+            query: {
+                orderByKey: true,
+                startAt: startKey,
+                limitToFirst: offset + 1
+            }
+        });
     }
 
     getAllSnapshotChanges(): Observable<DocumentChangeAction<T>[]> {
@@ -46,8 +63,8 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
 
     getById(id: string): Observable<T> {
         return this.afs.collection(this.collectionsName, ref => ref.where('id', '==', id))
-        .valueChanges().pipe(first())
-        .pipe(this.result());
+            .valueChanges().pipe(first())
+            .pipe(this.result());
     }
 
     save(obj: T): Promise<void | Observable<any>> {
@@ -70,7 +87,7 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
         //Firebase only accepts pure javascript data.
         let entityJavaScript = Object.assign({}, obj);
         return this.collections.doc(entityJavaScript.id).set(entityJavaScript)
-        .catch(this.handleError);
+            .catch(this.handleError);
     }
 
     delete(obj: string | T): Promise<void> {
