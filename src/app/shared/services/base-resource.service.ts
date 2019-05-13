@@ -1,18 +1,24 @@
 import { BaseResourceModel } from "../models/base-resource.model";
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, first } from 'rxjs/operators';
-import { AngularFirestore, AngularFirestoreCollection, DocumentChangeAction } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, DocumentChangeAction, Query, QueryFn } from '@angular/fire/firestore';
 
 export abstract class BaseResourceService<T extends BaseResourceModel> {
+
+    private limit = 5;
 
     protected collections: AngularFirestoreCollection<T> =
         this.afs.collection<T>(this.collectionsName, ref => ref.orderBy(this.orderByField || 'id'));
 
     constructor(
         protected afs: AngularFirestore,
-        protected collectionsName: string,
-        protected orderByField: string,
+        public collectionsName: string,
+        public orderByField: string,
         protected testType: new () => T) {
+    }
+
+    get getLimit() {
+        return this.limit;
     }
 
     getNew(): T {
@@ -39,21 +45,33 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
             .pipe(this.result());
     }
 
-    getList(offset, startKey?, limit: number): Observable<T[]> {
-        return this.afs.collection<T>(
-            this.collectionsName,
-            ref => ref
-            .orderBy('name')
-            .startAt(name)
-            .endAt(name + '\uf8ff'))
-            .valueChanges();
-        return this.afs.list(`comments/${postId}`, {
-            query: {
-                orderByKey: true,
-                startAt: startKey,
-                limitToFirst: offset + 1
-            }
-        });
+    getList(): Observable<T[]> {
+        let ref: QueryFn = ref => ref
+            .orderBy(this.orderByField || 'id')
+            .limit(this.limit);
+        return this.afs.collection<T>(this.collectionsName, ref)
+            .valueChanges()
+            .pipe(this.result());
+    }
+
+    getNextListStartAfter(lastVisible: string): Observable<T[]> {
+        let ref: QueryFn = ref => ref
+            .orderBy(this.orderByField || 'id')
+            .startAfter(lastVisible)
+            .limit(this.limit);
+        return this.afs.collection<T>(this.collectionsName, ref)
+            .valueChanges()
+            .pipe(this.result());
+    }
+
+    getNextListStartAt(lastVisible: string): Observable<T[]> {
+        let ref: QueryFn = ref => ref
+            .orderBy(this.orderByField || 'id')
+            .startAt(lastVisible)
+            .limit(this.limit);
+        return this.afs.collection<T>(this.collectionsName, ref)
+            .valueChanges()
+            .pipe(this.result());
     }
 
     getAllSnapshotChanges(): Observable<DocumentChangeAction<T>[]> {
