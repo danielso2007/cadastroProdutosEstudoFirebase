@@ -1,21 +1,27 @@
 import { BaseResourceModel } from "../models/base-resource.model";
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, first } from 'rxjs/operators';
-import { AngularFirestore, AngularFirestoreCollection, DocumentChangeAction } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection, DocumentChangeAction, Query, QueryFn } from '@angular/fire/firestore';
 
 export abstract class BaseResourceService<T extends BaseResourceModel> {
 
-    protected collections: AngularFirestoreCollection<T> = 
-            this.afs.collection<T>(this.collectionsName, ref => ref.orderBy(this.orderByField || 'id'));
+    private limit = 5;
+
+    protected collections: AngularFirestoreCollection<T> =
+        this.afs.collection<T>(this.collectionsName, ref => ref.orderBy(this.orderByField || 'id'));
 
     constructor(
-        protected afs: AngularFirestore, 
-        protected collectionsName: string,
-        protected orderByField: string,
+        protected afs: AngularFirestore,
+        public collectionsName: string,
+        public orderByField: string,
         protected testType: new () => T) {
     }
 
-    getNew() : T {
+    get getLimit() {
+        return this.limit;
+    }
+
+    getNew(): T {
         return new this.testType();
     }
 
@@ -36,7 +42,36 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
 
     getAll(): Observable<T[]> {
         return this.collections.valueChanges()
-        .pipe(this.result());
+            .pipe(this.result());
+    }
+
+    getList(): Observable<T[]> {
+        let ref: QueryFn = ref => ref
+            .orderBy(this.orderByField || 'id')
+            .limit(this.limit);
+        return this.afs.collection<T>(this.collectionsName, ref)
+            .valueChanges()
+            .pipe(this.result());
+    }
+
+    getNextListStartAfter(lastVisible: string): Observable<T[]> {
+        let ref: QueryFn = ref => ref
+            .orderBy(this.orderByField || 'id')
+            .startAfter(lastVisible)
+            .limit(this.limit);
+        return this.afs.collection<T>(this.collectionsName, ref)
+            .valueChanges()
+            .pipe(this.result());
+    }
+
+    getNextListStartAt(lastVisible: string): Observable<T[]> {
+        let ref: QueryFn = ref => ref
+            .orderBy(this.orderByField || 'id')
+            .startAt(lastVisible)
+            .limit(this.limit);
+        return this.afs.collection<T>(this.collectionsName, ref)
+            .valueChanges()
+            .pipe(this.result());
     }
 
     getAllSnapshotChanges(): Observable<DocumentChangeAction<T>[]> {
@@ -46,8 +81,8 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
 
     getById(id: string): Observable<T> {
         return this.afs.collection(this.collectionsName, ref => ref.where('id', '==', id))
-        .valueChanges().pipe(first())
-        .pipe(this.result());
+            .valueChanges().pipe(first())
+            .pipe(this.result());
     }
 
     save(obj: T): Promise<void | Observable<any>> {
@@ -70,7 +105,7 @@ export abstract class BaseResourceService<T extends BaseResourceModel> {
         //Firebase only accepts pure javascript data.
         let entityJavaScript = Object.assign({}, obj);
         return this.collections.doc(entityJavaScript.id).set(entityJavaScript)
-        .catch(this.handleError);
+            .catch(this.handleError);
     }
 
     delete(obj: string | T): Promise<void> {
