@@ -2,7 +2,11 @@
   <mat-card class="example-card">
     <mat-card-header>
       <mat-card-title>User profile</mat-card-title>
-      <mat-card-subtitle>Your profile data is displayed here</mat-card-subtitle>
+      <mat-card-subtitle>
+        <span *ngIf="emailVerified">Keep your profile up to date. Any questions, please contact support.</span>
+        <span class="emailVerifiedAlert" *ngIf="!emailVerified">Please check your email to confirm your registration. If you did not receive email confirmation of registration,
+          <span (click)="sendEmailVerification()" class="linkColor cursorPointer">click here</span> to receive another email.</span>
+      </mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content fxFlexFill>
@@ -19,12 +23,12 @@
         </div>
         <div fxFlex fxFlex.xs="100">
           <mat-form-field class="input-full-width">
-            <input type="text" matInput [disabled]='true' placeholder="Last SignIn Time" value="{{lastSignInTime | date:'yyyy/MM/dd'}}" />
+            <input type="text" matInput [disabled]='true' placeholder="Last SignIn Time" value="{{lastSignInTime | date:'yyyy/MM/dd HH:mm:ss'}}" />
           </mat-form-field>
         </div>
         <div fxFlex fxFlex.xs="100">
             <mat-form-field class="input-full-width">
-              <input matInput placeholder="Create at" [disabled]='true' value="{{user.createAt | date:'yyyy/MM/dd'}}" />
+              <input matInput placeholder="Create at" [disabled]='true' value="{{user.createAt | date:'yyyy/MM/dd HH:mm:ss'}}" />
             </mat-form-field>
           </div>
           <div fxFlex fxFlex.xs="100">

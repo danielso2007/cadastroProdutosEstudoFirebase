@@ -30,7 +30,6 @@ export class PerfilComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.title.setTitle('Profile');
-    console.log(this.authService.authUser);
     this.lastSignInTime = this.authService.authUser.lastSignInTime;
     this.emailVerified = this.authService.authUser.emailVerified;
     this.usersSubscription$ = this.userService.searchByEmail(this.authService.authUser.email).subscribe((users: User[]) => {
@@ -59,7 +58,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
           this.snackBar.open('An email with a link has been sent to you to set a new access password. Please login again.', 'Ok', { duration: 2000 });
           this.authService.logout();
         }).catch(err => {
-          this.snackBar.open(err, 'Ok', { duration: 2000 });
+          this.snackBar.open(err, 'Ok', { duration: 10000 });
         });
       }
     });
@@ -67,5 +66,13 @@ export class PerfilComponent implements OnInit, OnDestroy {
 
   changeEmail(): void {
 
+  }
+
+  sendEmailVerification(): void {
+    this.authService.sendEmailVerification().then(() => {
+      this.snackBar.open('A new registration confirmation email has been sent. Please check your email and click the link for activation.', 'Ok', { duration: 2000 });
+    }).catch(err => {
+      this.snackBar.open(err, 'Ok', { duration: 10000 });
+    });
   }
 }
