@@ -15,7 +15,7 @@ export class AuthService {
   redirectUrl: string;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private firebaseAuth: AngularFireAuth,
     private userService: UserService) {
   }

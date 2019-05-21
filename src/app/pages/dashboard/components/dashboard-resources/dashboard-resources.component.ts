@@ -27,6 +27,11 @@ export class DashboardResourcesComponent implements OnInit {
 
   resources: MenuItem[] = [
     {
+      url: '/dashboard/perfil',
+      icon: 'perm_identity',
+      title: 'Profile'
+    },
+    {
       url: '/dashboard/products',
       icon: 'chat_bubble',
       title: 'Products'

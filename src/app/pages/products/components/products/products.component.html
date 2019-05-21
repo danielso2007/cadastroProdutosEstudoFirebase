@@ -28,8 +28,8 @@
 
                 </mat-card-content>
                 <mat-card-actions>
-                    <button mat-stroked-button color="primary" type="submit" [disabled]="!productForm.valid" style="margin-right: 10px">Submit</button>
-                    <button mat-stroked-button color="warn" type="reset">Cancel</button>
+                    <button mat-raised-button color="primary" type="submit" [disabled]="!productForm.valid" style="margin-right: 10px">Submit</button>
+                    <button mat-raised-button color="warn" type="reset">Cancel</button>
                 </mat-card-actions>
               </mat-card>
             </form>
@@ -39,7 +39,7 @@
 
             <mat-divider></mat-divider>
 
-            <table mat-table [dataSource]="products$ | async" class="mat-elevation-z8">
+            <table style="margin-top: 20px" mat-table [dataSource]="products$ | async" class="mat-elevation-z8">
 
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef> Name </th>
@@ -120,7 +120,7 @@
                 </mat-card-content>
               </mat-card>
 
-            <table mat-table [dataSource]="filterProducts$ | async" class="mat-elevation-z8">
+            <table mat-table style="margin-top: 20px" [dataSource]="filterProducts$ | async" class="mat-elevation-z4">
 
                 <ng-container matColumnDef="name">
                     <th mat-header-cell *matHeaderCellDef> Name </th>

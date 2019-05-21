@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { MatSidenav, MatDialog, MatSnackBar } from '@angular/material';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { DialogConfirmDeleteComponent } from 'src/app/shared/components/dialog-confirm-delete/dialog-confirm-delete.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-header',
@@ -19,7 +20,7 @@ import { DialogConfirmDeleteComponent } from 'src/app/shared/components/dialog-c
         <span class="example-spacer"></span>
 
         <mat-menu #appMenuProfile="matMenu">
-          <button mat-menu-item>
+          <button mat-menu-item (click)="onPerfil()">
             <mat-icon class="example-icon" aria-hidden="false" aria-label="Profile">perm_identity</mat-icon>
             <span>Profile</span>
           </button>
@@ -44,11 +45,16 @@ export class DashboardHeaderComponent {
     public title: Title,
     public authService: AuthService,
     public dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) { }
 
   onLogout(): void {
     this.authService.onLogout(this.snackBar, this.dialog, DialogConfirmDeleteComponent);
+  }
+
+  onPerfil(): void {
+    this.router.navigate(['/dashboard/perfil']);
   }
 
 }

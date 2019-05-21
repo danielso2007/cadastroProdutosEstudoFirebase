@@ -14,6 +14,7 @@ const routes: Routes = [
       {path: 'products', loadChildren: '../products/products.module#ProductsModule', canLoad: [ AuthGuardService ]},
       {path: 'my-files', loadChildren: '../my-files/my-files.module#MyFilesModule', canLoad: [ AuthGuardService ]},
       {path: 'upload-files', loadChildren: '../upload-files/upload-files.module#UploadFilesModule', canLoad: [ AuthGuardService ]},
+      {path: 'perfil', loadChildren: '../perfil/perfil.module#PerfilModule', canLoad: [ AuthGuardService ]},
       { path: '', component: DashboardResourcesComponent}
     ]
   }

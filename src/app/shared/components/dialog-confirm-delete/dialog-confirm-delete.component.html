@@ -1,8 +1,27 @@
-<h1 mat-dialog-title *ngIf='title'>{{ title }}</h1>
+<h1 mat-dialog-title *ngIf="title">{{ title }}</h1>
 <div mat-dialog-content>
-  <p>{{ message }}</p>
+  {{ message }}
 </div>
 <div mat-dialog-actions>
-  <button mat-raised-button (click)="onNoClick()">{{ cancelLabel }}</button>
-  <button mat-raised-button color="warn" [mat-dialog-close]="data" cdkFocusInitial>{{ okLabel }}</button>
+  <table width="100%">
+    <tr>
+      <td align="left">
+        <button
+          mat-raised-button
+          [color]="okColor"
+          [mat-dialog-close]="data"
+          cdkFocusInitial
+        >
+          {{ okLabel }}
+        </button>
+      </td>
+      <td align="right">
+        <button mat-raised-button
+                [color]="cancelColor"
+                (click)="onNoClick()">
+          {{ cancelLabel }}
+        </button>
+      </td>
+    </tr>
+  </table>
 </div>

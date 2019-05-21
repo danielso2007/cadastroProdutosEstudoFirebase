@@ -3,7 +3,7 @@ import { ProductService } from './../../shared/product.service';
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar, MatDialog } from '@angular/material';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { DialogConfirmDeleteComponent } from '../../../../shared/components/dialog-confirm-delete/dialog-confirm-delete.component';
 import { Title } from '@angular/platform-browser';
 import { first } from 'rxjs/operators';
@@ -25,6 +25,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   displayedColumns = ['name', 'price', 'stock', 'operations'];
   displayedColumnsFilterList = ['name', 'price', 'stock'];
   mode = 'New';
+  dialogSubscription$: Subscription;
 
   productForm = this.fb.group({
     id: [undefined],
@@ -39,8 +40,8 @@ export class ProductsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private service: ProductService,
     private snackBar: MatSnackBar,
-    private title: Title,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private title: Title
   ) { }
 
   ngOnInit() {
@@ -95,6 +96,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.products$.subscribe().unsubscribe();
+    this.dialogSubscription$ ? this.dialogSubscription$.unsubscribe() : null;
   }
 
   onSubmit() {
@@ -150,7 +152,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
     };
     const dialogRef = this.dialog.open(DialogConfirmDeleteComponent, { width: '450px', data: dataDialog });
 
-    dialogRef.afterClosed().pipe(first()).subscribe(result => {
+    this.dialogSubscription$ = dialogRef.afterClosed().pipe(first()).subscribe(result => {
       if (result) {
         this.service.delete(obj)
           .then(() => {
