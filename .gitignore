@@ -49,3 +49,4 @@ package-lock.json
 /package-lock.json
 .env.ts
 .firebase
+firebase-debug.log
