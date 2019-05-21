@@ -24,6 +24,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   pageStart: Array<string> = [];
   displayedColumns = ['name', 'price', 'stock', 'operations'];
   displayedColumnsFilterList = ['name', 'price', 'stock'];
+  mode = 'New';
 
   productForm = this.fb.group({
     id: [undefined],
@@ -58,7 +59,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
       if (list.length >= this.service.getLimit) {
         this.getFirstVisible(list);
         this.getLastVisible(list);
-      } else if(this.page > this.pageStart.length) {
+      } else if (this.page > this.pageStart.length) {
         this.page = this.pageStart.length;
       }
     });
@@ -130,12 +131,14 @@ export class ProductsComponent implements OnInit, OnDestroy {
   }
 
   cleanForm(): void {
+    this.mode = 'New';
     this.productForm.reset({ name: '', price: 0, stock: 0, id: undefined, createAt: undefined, updateAt: undefined });
     this.productNameField.nativeElement.focus();
   }
 
   edit(obj: Product) {
     if (!obj.updateAt) obj.updateAt = 0;
+    this.mode = 'Edit';
     this.productForm.setValue(obj);
   }
 
